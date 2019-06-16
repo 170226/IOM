@@ -1,0 +1,22 @@
+#!/bin/bash
+
+#### splice url string and fill in current time to generate a new Grafana image ####
+url="http://192.168.188.128:3000/render/dashboard-solo/db/dashboard1?panelId=1&orgId=1&tab=metrics&refresh=5s&from="
+currentStamp=`date +%s`
+to="&to="
+fromStamp=`date -d "5 minutes ago" +%s`
+currentTimeStamp=$((currentStamp*1000+`date "+%N"`/1000000))
+fromTimeStamp=$((fromStamp*1000+`date "+%N"`/1000000))
+size="&width=1000&height=500&tz=UTC%2B08%3A00"
+
+str1="$url$fromTimeStamp$to$currentTimeStamp$size"
+
+#### download Grafana image to local GitHub repo ####
+curl -H "Authorization: Bearer eyJrIjoiTGJ3aVVONHJQMTYzRkhCZkxncGNSeHA3MnhyQVl2SHMiLCJuIjoia2V5X3Rlc3QxIiwiaWQiOjF9" $str1 > ~/Desktop/IOM/Grafana-images/t$1.png
+cd ~/Desktop/IOM/Grafana-images/
+
+####  Added by cpf ######## 
+git add t$1.png
+
+git commit -m 'this is for test'
+git push origin master
